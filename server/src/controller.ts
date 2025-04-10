@@ -1,7 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { database } from "./model";
 
-
 /**
  * TODO: Copy the route handling logic from the previous exercise
  * into these functions. You will need to use the party array from
@@ -10,25 +9,20 @@ import { database } from "./model";
 
 // GET /
 export const getHome = (req: IncomingMessage, res: ServerResponse) => {
-	 /** TODO:
-     * 1. Grab the language cookie from the request.
-     * 2. Get the language from the cookie.
-     * 3. Send the appropriate Welcome message to the view based on the language.
-     */
-	
-	
+	/** TODO:
+	 * 1. Grab the language cookie from the request.
+	 * 2. Get the language from the cookie.
+	 * 3. Send the appropriate Welcome message to the view based on the language.
+	 */
 
 	let message = "";
 	// Check if English or French is present in the cookies.
 	// const cookies = getCookies(req);
 	// const languageCode = cookies.language === "fr" ? "fr" : "en";
 
-	
-	
-
 	// Set response headers
 	res.statusCode = 200;
-	res.setHeader("Content-Type", "application/json");	
+	res.setHeader("Content-Type", "application/json");
 	/*
 	* CORS (Cross-Origin Resource Sharing) Headers
 	* res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); Specifies which origins (websites) are allowed to access the server. 
@@ -44,32 +38,34 @@ export const getHome = (req: IncomingMessage, res: ServerResponse) => {
 	]);
 	
 	*/
-	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
-	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"); 
-	res.setHeader("Access-Control-Allow-Headers", "*");  
-	res.setHeader("Access-Control-Allow-Credentials", "true"); 
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+	res.setHeader("Access-Control-Allow-Headers", "*");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
 
 	// Set cookies
+	res.setHeader("Set-Cookie", [
+		"likes=somethingYouLike;SameSite=Strict",
+		"lovesWebDev=false",
+	]);
 
-    // Send JSON response
+	// Send JSON response
 	res.end(JSON.stringify({ message: message }, null, 2));
 };
 
 // GET /pokemon
 export const getAllPokemon = (req: IncomingMessage, res: ServerResponse) => {
-	 /** TODO:
-     * 1. Grab the language cookie from the request.
-     * 2. Get the language from the cookie.
-     * 3. Send the appropriate Pokemon data to the view based on the language.
+	/** TODO:
+	 * 1. Grab the language cookie from the request.
+	 * 2. Get the language from the cookie.
+	 * 3. Send the appropriate Pokemon data to the view based on the language.
 	 * 4. Set the response headers based on the getHome example
-     */
+	 */
 	console.log("Get all pokemon");
-	
-
 
 	res.statusCode = 200;
 	res.setHeader("Content-Type", "application/json");
-	
+
 	//Set the Cor headers
 	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -77,31 +73,25 @@ export const getAllPokemon = (req: IncomingMessage, res: ServerResponse) => {
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 
 	res.end(
-		JSON.stringify(
-			{ message: "All Pokemon", payload: database },
-			null,
-			2,
-		),
+		JSON.stringify({ message: "All Pokemon", payload: database }, null, 2),
 	);
 };
 
 // GET /pokemon/:id
 export const getOnePokemon = (req: IncomingMessage, res: ServerResponse) => {
-	 /** TODO:
-     * 1. Grab the language cookie from the request.
-     * 2. Get the language from the cookie.
-     * 3. Send the appropriate Pokemon data to the view based on the language.
-     */
-	
-	 const id = Number(req.url?.split("/")[2]);
-	 const foundPokemon = database.find((pokemon) => pokemon.id === id);
+	/** TODO:
+	 * 1. Grab the language cookie from the request.
+	 * 2. Get the language from the cookie.
+	 * 3. Send the appropriate Pokemon data to the view based on the language.
+	 */
 
+	const id = Number(req.url?.split("/")[2]);
+	const foundPokemon = database.find((pokemon) => pokemon.id === id);
 
 	if (foundPokemon) {
-		
 		res.statusCode = 200;
 		res.setHeader("Content-Type", "application/json");
-	    // set the CORs headers from getHome example.
+		// set the CORs headers from getHome example.
 		res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 		res.setHeader("Access-Control-Allow-Headers", "*");
@@ -119,8 +109,6 @@ export const getOnePokemon = (req: IncomingMessage, res: ServerResponse) => {
 		res.end(JSON.stringify({ message: "Pokemon not found" }, null, 2));
 	}
 };
-
-
 
 /**
  * @returns The cookies of the request as a Record type object.
@@ -140,6 +128,17 @@ const getCookies = (req: IncomingMessage): Record<string, string> => {
 	 *    - Assign the name as the key and the value as the value.
 	 * 3. Return the object, empty object if there a no cookies..
 	 */
+	const parseCookies = () => {
+		let cookies: Record<string, string> = {};
+
+		if (!document.cookie) return {};
+
+		cookies = document.cookie.split("; ").reduce((cookie) => {
+			const [name, value] = cookie.split("=");
+			cookies[name] = value;
+			return cookies;
+		}, {});
+	};
 
 	return {};
 };
