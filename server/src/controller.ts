@@ -15,10 +15,17 @@ export const getHome = (req: IncomingMessage, res: ServerResponse) => {
 	 * 3. Send the appropriate Welcome message to the view based on the language.
 	 */
 
-	let message = "";
 	// Check if English or French is present in the cookies.
-	// const cookies = getCookies(req);
-	// const languageCode = cookies.language === "fr" ? "fr" : "en";
+	const cookies = getCookies(req);
+	const languageCode = cookies.language === "fr" ? "fr" : "en";
+
+	let message: string = "";
+
+	if (languageCode === "en") {
+		message = "Welcome!";
+	} else {
+		message = "Bienvenue!";
+	}
 
 	// Set response headers
 	res.statusCode = 200;
@@ -38,7 +45,7 @@ export const getHome = (req: IncomingMessage, res: ServerResponse) => {
 	]);
 	
 	*/
-	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5174");
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 	res.setHeader("Access-Control-Allow-Headers", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -47,6 +54,7 @@ export const getHome = (req: IncomingMessage, res: ServerResponse) => {
 	res.setHeader("Set-Cookie", [
 		"likes=somethingYouLike;SameSite=Strict",
 		"lovesWebDev=false",
+		`language=${languageCode}`,
 	]);
 
 	// Send JSON response
@@ -128,17 +136,19 @@ const getCookies = (req: IncomingMessage): Record<string, string> => {
 	 *    - Assign the name as the key and the value as the value.
 	 * 3. Return the object, empty object if there a no cookies..
 	 */
-	const parseCookies = () => {
-		let cookies: Record<string, string> = {};
+	const req_cookies = req.headers.cookie;
+	const cookies: Record<string, string> = {};
 
-		if (!document.cookie) return {};
-
-		cookies = document.cookie.split("; ").reduce((cookie) => {
+	if (!req_cookies) {
+		return {};
+	} else {
+		req_cookies.split(";").forEach((cookie) => {
 			const [name, value] = cookie.split("=");
-			cookies[name] = value;
-			return cookies;
-		}, {});
-	};
+			cookies[name.trim()] = value.trim();
 
-	return {};
+			console.log(name + ": " + value);
+		});
+
+		return cookies;
+	}
 };

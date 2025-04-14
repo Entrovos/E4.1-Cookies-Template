@@ -5,7 +5,7 @@ import LanguageSelector from "./LanguageSelector";
 function Home() {
 	const [h2Tag, seth2Tag] = useState("");
 	const getHome = async () => {
-		const fetchURL = `http://localhost:3000`;
+		const fetchURL = `http://localhost:3001`;
 		const requestOptions = {
 			method: "GET",
 			credentials: "include", // 🔥 Required to send cookies
